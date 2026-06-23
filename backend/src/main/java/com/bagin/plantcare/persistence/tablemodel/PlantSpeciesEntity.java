@@ -1,5 +1,6 @@
 package com.bagin.plantcare.persistence.tablemodel;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,5 +31,6 @@ public class PlantSpeciesEntity {
 
   private String defaultSunlight;
 
+  @Column(length = 1000)
   private String imageUrl;
 }

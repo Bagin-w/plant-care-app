@@ -31,6 +31,11 @@ public class PlantSpeciesDbAdapter implements PlantSpeciesPort {
   }
 
   @Override
+  public Optional<PlantSpecies> findByPerenualId(Long perenualId) {
+    return jpaRepository.findByPerenualId(perenualId).map(mapper::toDomain);
+  }
+
+  @Override
   public List<PlantSpecies> findAll() {
     return jpaRepository.findAll().stream()
         .map(mapper::toDomain)

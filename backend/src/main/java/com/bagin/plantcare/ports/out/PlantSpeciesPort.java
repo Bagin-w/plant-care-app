@@ -11,6 +11,8 @@ public interface PlantSpeciesPort {
 
   Optional<PlantSpecies> findById(Long id);
 
+  Optional<PlantSpecies> findByPerenualId(Long perenualId);
+
   List<PlantSpecies> findAll();
 
   List<PlantSpecies> searchByName(String query);

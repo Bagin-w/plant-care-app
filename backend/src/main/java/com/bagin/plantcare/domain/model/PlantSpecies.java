@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public class PlantSpecies {
 
   private final Long id;
+  private final Long perenualId;
   private final String commonName;
   private final String scientificName;
   private final String defaultWatering;

@@ -10,6 +10,7 @@ public class PlantSpeciesMapper {
   public PlantSpecies toDomain(PlantSpeciesEntity entity) {
     return new PlantSpecies(
         entity.getId(),
+        entity.getPerenualId(),
         entity.getCommonName(),
         entity.getScientificName(),
         entity.getDefaultWatering(),
@@ -21,6 +22,7 @@ public class PlantSpeciesMapper {
   public PlantSpeciesEntity toEntity(PlantSpecies species) {
     PlantSpeciesEntity entity = new PlantSpeciesEntity();
     entity.setId(species.getId());
+    entity.setPerenualId(species.getPerenualId());
     entity.setCommonName(species.getCommonName());
     entity.setScientificName(species.getScientificName());
     entity.setDefaultWatering(species.getDefaultWatering());
