@@ -36,7 +36,6 @@ public class PlantController {
 
   @GetMapping
   public List<PlantResponse> getAll(@AuthenticationPrincipal Long userId) {
-    System.out.println("DEBUG: userId aus Token = " + userId);
     return plantUseCase.getPlantsForUser(userId).stream()
         .map(PlantResponse::fromDomain)
         .toList();
