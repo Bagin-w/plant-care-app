@@ -1,7 +1,7 @@
-import {Component} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
-import {AuthService} from '../../../core/services/auth.service';
+import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,24 +13,23 @@ export class Login {
 
   email = '';
   password = '';
-  errorMessage = '';
+  errorMessage = signal('');
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {
-  }
+  ) {}
 
   onSubmit(): void {
-    this.errorMessage = '';
+    this.errorMessage.set('');
 
-    this.authService.login({email: this.email, password: this.password}).subscribe({
+    this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         this.authService.saveToken(response.token);
         this.router.navigate(['/plants']);
       },
       error: (err) => {
-        this.errorMessage = 'Login fehlgeschlagen. Bitte prüfe deine Zugangsdaten.';
+        this.errorMessage.set('Login fehlgeschlagen. Bitte prüfe deine Zugangsdaten.');
       }
     });
   }

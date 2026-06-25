@@ -1,0 +1,21 @@
+<div class="plant-list-container">
+  <h1>Meine Pflanzen</h1>
+
+  @if (errorMessage()) {
+    <p class="error">{{ errorMessage() }}</p>
+  }
+
+  @if (plants().length === 0 && !errorMessage()) {
+    <p>Du hast noch keine Pflanzen angelegt.</p>
+  }
+
+  <div class="plant-grid">
+    @for (plant of plants(); track plant.id) {
+      <div class="plant-card">
+        <h3>Name: {{ plant.nickname }}</h3>
+        <p>Spezies: {{ plant.speciesName }}</p>
+        <p>Ort: {{ plant.location }}</p>
+      </div>
+    }
+  </div>
+</div>

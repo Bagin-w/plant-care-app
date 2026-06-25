@@ -24,8 +24,8 @@
       />
     </div>
 
-    @if (errorMessage) {
-      <p class="error">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
     }
 
     <button type="submit">Einloggen</button>
