@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { PushNotificationService } from '../../../core/services/push-notification.service';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class Login {
 
   constructor(
     private authService: AuthService,
+    private pushNotificationService: PushNotificationService,
     private router: Router
   ) {}
 
@@ -26,6 +28,7 @@ export class Login {
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         this.authService.saveToken(response.token);
+        this.pushNotificationService.subscribeToPush();
         this.router.navigate(['/plants']);
       },
       error: (err) => {
