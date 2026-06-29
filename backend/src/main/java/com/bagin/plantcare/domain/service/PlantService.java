@@ -61,6 +61,17 @@ public class PlantService implements PlantUseCase {
     plantPort.deleteById(plantId);
   }
 
+  @Override
+  public Plant updatePlant(Long userId, Long plantId, String nickname, String speciesName, String photoUrl, String location) {
+    Plant existing = plantPort.findById(plantId)
+        .orElseThrow(() -> new RuntimeException("Pflanze nicht gefunden: " + plantId));
+
+    assertOwnership(existing, userId);
+
+    Plant updated = new Plant(plantId, userId, nickname, speciesName, photoUrl, location);
+    return plantPort.save(updated);
+  }
+
   private void assertOwnership(Plant plant, Long userId) {
     if (!plant.getUserId().equals(userId)) {
       throw new RuntimeException("Keine Berechtigung für diese Pflanze");

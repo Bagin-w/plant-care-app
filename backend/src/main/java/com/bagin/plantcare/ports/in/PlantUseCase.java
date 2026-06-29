@@ -12,5 +12,7 @@ public interface PlantUseCase {
 
   List<Plant> getPlantsForUser(Long userId);
 
+  Plant updatePlant(Long userId, Long plantId, String nickname, String speciesName, String photoUrl, String location);
+
   void deletePlant(Long userId, Long plantId);
 }

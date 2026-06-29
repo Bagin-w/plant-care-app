@@ -20,6 +20,10 @@ export class PlantService {
     return this.http.post<Plant>(this.apiUrl, request);
   }
 
+  update(id: number, request: CreatePlantRequest): Observable<Plant> {
+    return this.http.put<Plant>(`${this.apiUrl}/${id}`, request);
+  }
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

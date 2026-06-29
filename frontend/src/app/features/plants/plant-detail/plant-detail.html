@@ -1,10 +1,4 @@
 <div class="plant-detail-container">
-  @if (plant()) {
-    <h1>{{ plant()!.nickname }}</h1>
-    <p>{{ plant()!.speciesName }} – {{ plant()!.location }}</p>
-  }
-
-  <h2>Pflegeprofil</h2>
 
   @if (errorMessage()) {
     <p class="error">{{ errorMessage() }}</p>
@@ -13,83 +7,183 @@
     <p class="success">{{ successMessage() }}</p>
   }
 
-  <form (ngSubmit)="onSave()">
-    <div class="form-group">
-      <label for="lightRequirement">Lichtbedarf</label>
-      <input
-        type="text"
-        id="lightRequirement"
-        [ngModel]="form().lightRequirement"
-        (ngModelChange)="updateField('lightRequirement', $event)"
-        name="lightRequirement"
-      />
-    </div>
+  @if (!isEditMode()) {
 
-    <div class="form-group">
-      <label for="temperatureMin">Min. Temperatur (°C)</label>
-      <input
-        type="number"
-        id="temperatureMin"
-        [ngModel]="form().temperatureMin"
-        (ngModelChange)="updateField('temperatureMin', $event)"
-        name="temperatureMin"
-      />
-    </div>
+    <!-- ANSICHTS-MODUS -->
+    @if (plant()) {
+      <h1>{{ plant()!.nickname }}</h1>
+      <p><strong>Art:</strong> {{ plant()!.speciesName }}</p>
+      <p><strong>Standort:</strong> {{ plant()!.location }}</p>
+    }
 
-    <div class="form-group">
-      <label for="temperatureMax">Max. Temperatur (°C)</label>
-      <input
-        type="number"
-        id="temperatureMax"
-        [ngModel]="form().temperatureMax"
-        (ngModelChange)="updateField('temperatureMax', $event)"
-        name="temperatureMax"
-      />
-    </div>
+    <h2>Pflegeprofil</h2>
 
-    <div class="form-group">
-      <label for="humidityRequirement">Luftfeuchtigkeit</label>
-      <input
-        type="text"
-        id="humidityRequirement"
-        [ngModel]="form().humidityRequirement"
-        (ngModelChange)="updateField('humidityRequirement', $event)"
-        name="humidityRequirement"
-      />
-    </div>
+    @if (careProfile()) {
+      @if (careProfile()!.lightRequirement) {
+        <p><strong>Lichtbedarf:</strong> {{ careProfile()!.lightRequirement }}</p>
+      }
 
-    <div class="form-group">
-      <label for="wateringIntervalDays">Gießintervall (Tage)</label>
-      <input
-        type="number"
-        id="wateringIntervalDays"
-        [ngModel]="form().wateringIntervalDays"
-        (ngModelChange)="updateField('wateringIntervalDays', $event)"
-        name="wateringIntervalDays"
-      />
-    </div>
+      @if (careProfile()!.temperatureMin !== null || careProfile()!.temperatureMax !== null) {
+        <p>
+          <strong>Temperatur:</strong>
+          @if (careProfile()!.temperatureMin !== null) {
+            {{ careProfile()!.temperatureMin }}°C
+          }
+          @if (careProfile()!.temperatureMin !== null && careProfile()!.temperatureMax !== null) {
+            –
+          }
+          @if (careProfile()!.temperatureMax !== null) {
+            {{ careProfile()!.temperatureMax }}°C
+          }
+        </p>
+      }
 
-    <div class="form-group">
-      <label for="fertilizingIntervalDays">Düngeintervall (Tage)</label>
-      <input
-        type="number"
-        id="fertilizingIntervalDays"
-        [ngModel]="form().fertilizingIntervalDays"
-        (ngModelChange)="updateField('fertilizingIntervalDays', $event)"
-        name="fertilizingIntervalDays"
-      />
-    </div>
+      @if (careProfile()!.humidityRequirement) {
+        <p><strong>Luftfeuchtigkeit:</strong> {{ careProfile()!.humidityRequirement }}</p>
+      }
 
-    <div class="form-group">
-      <label for="notes">Notizen</label>
-      <textarea
-        id="notes"
-        [ngModel]="form().notes"
-        (ngModelChange)="updateField('notes', $event)"
-        name="notes"
-      ></textarea>
-    </div>
+      @if (careProfile()!.wateringIntervalDays !== null) {
+        <p><strong>Gießintervall:</strong> alle {{ careProfile()!.wateringIntervalDays }} Tage</p>
+      }
 
-    <button type="submit">Speichern</button>
-  </form>
+      @if (careProfile()!.fertilizingIntervalDays !== null) {
+        <p><strong>Düngeintervall:</strong> alle {{ careProfile()!.fertilizingIntervalDays }} Tage</p>
+      }
+
+      @if (careProfile()!.notes) {
+        <p><strong>Notizen:</strong> {{ careProfile()!.notes }}</p>
+      }
+
+      @if (!careProfile()!.lightRequirement && careProfile()!.temperatureMin === null && careProfile()!.temperatureMax === null && !careProfile()!.humidityRequirement && careProfile()!.wateringIntervalDays === null && careProfile()!.fertilizingIntervalDays === null && !careProfile()!.notes) {
+        <p class="empty-hint">Noch keine Pflegehinweise hinterlegt. Klicke auf "Bearbeiten", um sie einzutragen.</p>
+      }
+    }
+
+    <button (click)="enterEditMode()">Bearbeiten</button>
+
+  } @else {
+
+    <!-- BEARBEITUNGS-MODUS -->
+    <form (ngSubmit)="onSave()">
+
+      <h2>Pflanze</h2>
+
+      <div class="form-group">
+        <label for="nickname">Name</label>
+        <input
+          type="text"
+          id="nickname"
+          [ngModel]="plantForm().nickname"
+          (ngModelChange)="updatePlantField('nickname', $event)"
+          name="nickname"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="speciesName">Pflanzenart</label>
+        <input
+          type="text"
+          id="speciesName"
+          [ngModel]="plantForm().speciesName"
+          (ngModelChange)="updatePlantField('speciesName', $event)"
+          name="speciesName"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="location">Standort</label>
+        <input
+          type="text"
+          id="location"
+          [ngModel]="plantForm().location"
+          (ngModelChange)="updatePlantField('location', $event)"
+          name="location"
+        />
+      </div>
+
+      <h2>Pflegeprofil</h2>
+
+      <div class="form-group">
+        <label for="lightRequirement">Lichtbedarf</label>
+        <input
+          type="text"
+          id="lightRequirement"
+          [ngModel]="careProfileForm().lightRequirement"
+          (ngModelChange)="updateCareProfileField('lightRequirement', $event)"
+          name="lightRequirement"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="temperatureMin">Min. Temperatur (°C)</label>
+        <input
+          type="number"
+          id="temperatureMin"
+          [ngModel]="careProfileForm().temperatureMin"
+          (ngModelChange)="updateCareProfileField('temperatureMin', $event)"
+          name="temperatureMin"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="temperatureMax">Max. Temperatur (°C)</label>
+        <input
+          type="number"
+          id="temperatureMax"
+          [ngModel]="careProfileForm().temperatureMax"
+          (ngModelChange)="updateCareProfileField('temperatureMax', $event)"
+          name="temperatureMax"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="humidityRequirement">Luftfeuchtigkeit</label>
+        <input
+          type="text"
+          id="humidityRequirement"
+          [ngModel]="careProfileForm().humidityRequirement"
+          (ngModelChange)="updateCareProfileField('humidityRequirement', $event)"
+          name="humidityRequirement"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="wateringIntervalDays">Gießintervall (Tage)</label>
+        <input
+          type="number"
+          id="wateringIntervalDays"
+          [ngModel]="careProfileForm().wateringIntervalDays"
+          (ngModelChange)="updateCareProfileField('wateringIntervalDays', $event)"
+          name="wateringIntervalDays"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="fertilizingIntervalDays">Düngeintervall (Tage)</label>
+        <input
+          type="number"
+          id="fertilizingIntervalDays"
+          [ngModel]="careProfileForm().fertilizingIntervalDays"
+          (ngModelChange)="updateCareProfileField('fertilizingIntervalDays', $event)"
+          name="fertilizingIntervalDays"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notizen</label>
+        <textarea
+          id="notes"
+          [ngModel]="careProfileForm().notes"
+          (ngModelChange)="updateCareProfileField('notes', $event)"
+          name="notes"
+        ></textarea>
+      </div>
+
+      <button type="submit">Speichern</button>
+      <button type="button" (click)="cancelEdit()">Abbrechen</button>
+
+    </form>
+
+  }
+
 </div>

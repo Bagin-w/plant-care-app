@@ -56,4 +56,16 @@ public class PlantController {
   ) {
     plantUseCase.deletePlant(userId, id);
   }
+
+  @PutMapping("/{id}")
+  public PlantResponse update(
+      @AuthenticationPrincipal Long userId,
+      @PathVariable Long id,
+      @RequestBody CreatePlantRequest request
+  ) {
+    Plant updated = plantUseCase.updatePlant(
+        userId, id, request.nickname(), request.speciesName(), request.photoUrl(), request.location()
+    );
+    return PlantResponse.fromDomain(updated);
+  }
 }

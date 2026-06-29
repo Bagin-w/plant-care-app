@@ -6,6 +6,12 @@ import { CareProfileService } from '../../../core/services/care-profile.service'
 import { Plant } from '../../../core/models/plant.model';
 import { CareProfile } from '../../../core/models/care-profile.model';
 
+interface PlantFormState {
+  nickname: string;
+  speciesName: string;
+  location: string;
+}
+
 interface CareProfileFormState {
   lightRequirement: string;
   temperatureMin: number | null;
@@ -25,12 +31,20 @@ interface CareProfileFormState {
 export class PlantDetail implements OnInit {
 
   plant = signal<Plant | null>(null);
+  careProfile = signal<CareProfile | null>(null);
   errorMessage = signal('');
   successMessage = signal('');
+  isEditMode = signal(false);
 
   plantId!: number;
 
-  form = signal<CareProfileFormState>({
+  plantForm = signal<PlantFormState>({
+    nickname: '',
+    speciesName: '',
+    location: ''
+  });
+
+  careProfileForm = signal<CareProfileFormState>({
     lightRequirement: '',
     temperatureMin: null,
     temperatureMax: null,
@@ -56,12 +70,20 @@ export class PlantDetail implements OnInit {
       next: (plants) => {
         const found = plants.find(p => p.id === this.plantId) ?? null;
         this.plant.set(found);
+        if (found) {
+          this.plantForm.set({
+            nickname: found.nickname,
+            speciesName: found.speciesName,
+            location: found.location
+          });
+        }
       }
     });
 
     this.careProfileService.get(this.plantId).subscribe({
-      next: (profile: CareProfile) => {
-        this.form.set({
+      next: (profile) => {
+        this.careProfile.set(profile);
+        this.careProfileForm.set({
           lightRequirement: profile.lightRequirement ?? '',
           temperatureMin: profile.temperatureMin,
           temperatureMax: profile.temperatureMax,
@@ -77,30 +99,61 @@ export class PlantDetail implements OnInit {
     });
   }
 
-  updateField<K extends keyof CareProfileFormState>(field: K, value: CareProfileFormState[K]): void {
-    this.form.update(current => ({ ...current, [field]: value }));
+  updatePlantField<K extends keyof PlantFormState>(field: K, value: PlantFormState[K]): void {
+    this.plantForm.update(current => ({ ...current, [field]: value }));
+  }
+
+  updateCareProfileField<K extends keyof CareProfileFormState>(field: K, value: CareProfileFormState[K]): void {
+    this.careProfileForm.update(current => ({ ...current, [field]: value }));
+  }
+
+  enterEditMode(): void {
+    this.isEditMode.set(true);
+    this.successMessage.set('');
+  }
+
+  cancelEdit(): void {
+    this.isEditMode.set(false);
+    this.loadData();
   }
 
   onSave(): void {
     this.successMessage.set('');
     this.errorMessage.set('');
 
-    const current = this.form();
+    const plantData = this.plantForm();
+    const careProfileData = this.careProfileForm();
 
-    this.careProfileService.update(this.plantId, {
-      lightRequirement: current.lightRequirement || null,
-      temperatureMin: current.temperatureMin,
-      temperatureMax: current.temperatureMax,
-      humidityRequirement: current.humidityRequirement || null,
-      wateringIntervalDays: current.wateringIntervalDays,
-      fertilizingIntervalDays: current.fertilizingIntervalDays,
-      notes: current.notes || null
+    this.plantService.update(this.plantId, {
+      nickname: plantData.nickname,
+      speciesName: plantData.speciesName,
+      photoUrl: this.plant()?.photoUrl ?? null,
+      location: plantData.location
     }).subscribe({
-      next: () => {
-        this.successMessage.set('Gespeichert!');
+      next: (updatedPlant) => {
+        this.plant.set(updatedPlant);
+
+        this.careProfileService.update(this.plantId, {
+          lightRequirement: careProfileData.lightRequirement || null,
+          temperatureMin: careProfileData.temperatureMin,
+          temperatureMax: careProfileData.temperatureMax,
+          humidityRequirement: careProfileData.humidityRequirement || null,
+          wateringIntervalDays: careProfileData.wateringIntervalDays,
+          fertilizingIntervalDays: careProfileData.fertilizingIntervalDays,
+          notes: careProfileData.notes || null
+        }).subscribe({
+          next: (updatedProfile) => {
+            this.careProfile.set(updatedProfile);
+            this.successMessage.set('Gespeichert!');
+            this.isEditMode.set(false);
+          },
+          error: () => {
+            this.errorMessage.set('Pflegeprofil konnte nicht gespeichert werden.');
+          }
+        });
       },
-      error: (err) => {
-        this.errorMessage.set('Speichern fehlgeschlagen.');
+      error: () => {
+        this.errorMessage.set('Pflanzendaten konnten nicht gespeichert werden.');
       }
     });
   }
