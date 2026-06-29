@@ -8,6 +8,8 @@ import { Plant } from '../../../core/models/plant.model';
 import { CareProfile } from '../../../core/models/care-profile.model';
 import { ReminderRule, ReminderType } from '../../../core/models/reminder.model';
 import { getReminderTypeLabel } from '../../../core/utils/reminder-label.util';
+import {DatePipe, SlicePipe} from '@angular/common';
+import { formatIntervalDays } from '../../../core/utils/interval-label.util';
 
 
 interface PlantFormState {
@@ -35,7 +37,7 @@ interface NewReminderFormState {
 
 @Component({
   selector: 'app-plant-detail',
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe, SlicePipe],
   templateUrl: './plant-detail.html',
   styleUrl: './plant-detail.css'
 })
@@ -246,5 +248,9 @@ export class PlantDetail implements OnInit {
 
   getTypeLabel(type: ReminderType, customLabel: string | null): string {
     return getReminderTypeLabel(type, customLabel);
+  }
+
+  getIntervalLabel(days: number): string {
+    return formatIntervalDays(days);
   }
 }

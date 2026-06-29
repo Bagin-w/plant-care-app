@@ -33,7 +33,11 @@ public class ReminderRuleService implements ReminderRuleUseCase {
   ) {
     assertPlantOwnership(userId, plantId);
 
-    LocalDate nextDueAt = LocalDate.now().plusDays(intervalDays);
+    if (intervalDays == null || intervalDays < 1) {
+      throw new RuntimeException("Intervall muss mindestens 1 Tag betragen");
+    }
+
+    LocalDate nextDueAt = calculateInitialDueDate(intervalDays, preferredTime);
 
     ReminderRule newRule = new ReminderRule(
         null,
@@ -48,6 +52,21 @@ public class ReminderRuleService implements ReminderRuleUseCase {
     );
 
     return reminderRulePort.save(newRule);
+  }
+
+  private LocalDate calculateInitialDueDate(Integer intervalDays, LocalTime preferredTime) {
+    LocalDate today = LocalDate.now();
+
+    if (preferredTime == null) {
+      return today.plusDays(intervalDays);
+    }
+
+    LocalTime now = LocalTime.now();
+    if (preferredTime.isAfter(now)) {
+      return today;
+    }
+
+    return today.plusDays(intervalDays);
   }
 
   @Override
