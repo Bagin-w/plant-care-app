@@ -5,11 +5,13 @@ import com.bagin.plantcare.domain.model.Plant;
 import com.bagin.plantcare.ports.in.PlantUseCase;
 import com.bagin.plantcare.ports.out.CareProfilePort;
 import com.bagin.plantcare.ports.out.PlantPort;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class PlantService implements PlantUseCase {
 
   private final PlantPort plantPort;

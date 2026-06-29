@@ -1,6 +1,6 @@
 <div class="plant-list-container">
   <h1>Meine Pflanzen</h1>
-
+  <a routerLink="/plants/new">+ Neue Pflanze</a>
   @if (errorMessage()) {
     <p class="error">{{ errorMessage() }}</p>
   }
@@ -12,9 +12,10 @@
   <div class="plant-grid">
     @for (plant of plants(); track plant.id) {
       <div class="plant-card">
-        <h3>Name: {{ plant.nickname }}</h3>
-        <p>Spezies: {{ plant.speciesName }}</p>
-        <p>Ort: {{ plant.location }}</p>
+        <h3>{{ plant.nickname }}</h3>
+        <p>{{ plant.speciesName }}</p>
+        <p>{{ plant.location }}</p>
+        <button (click)="onDelete(plant.id)">Löschen</button>
       </div>
     }
   </div>
