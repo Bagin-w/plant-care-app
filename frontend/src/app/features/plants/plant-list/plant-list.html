@@ -12,7 +12,7 @@
   <div class="plant-grid">
     @for (plant of plants(); track plant.id) {
       <div class="plant-card">
-        <h3>{{ plant.nickname }}</h3>
+        <h3><a [routerLink]="['/plants', plant.id]">{{ plant.nickname }}</a></h3>
         <p>{{ plant.speciesName }}</p>
         <p>{{ plant.location }}</p>
         <button (click)="onDelete(plant.id)">Löschen</button>
