@@ -16,6 +16,7 @@ public class ReminderRule {
   private final Long id;
   private final Long plantId;
   private final Type type;
+  private final String customLabel;
   private final Integer intervalDays;
   private final LocalTime preferredTime;
   private final LocalDate lastTriggeredAt;

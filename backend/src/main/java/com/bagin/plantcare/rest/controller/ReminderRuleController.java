@@ -28,6 +28,7 @@ public class ReminderRuleController {
         userId,
         plantId,
         request.type(),
+        request.customLabel(),
         request.intervalDays(),
         request.preferredTime()
     );
@@ -58,5 +59,13 @@ public class ReminderRuleController {
       @PathVariable Long reminderId
   ) {
     reminderRuleUseCase.deleteReminder(userId, reminderId);
+  }
+
+  @PatchMapping("/api/reminders/{reminderId}/activate")
+  public void activate(
+      @AuthenticationPrincipal Long userId,
+      @PathVariable Long reminderId
+  ) {
+    reminderRuleUseCase.activateReminder(userId, reminderId);
   }
 }

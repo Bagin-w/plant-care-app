@@ -27,6 +27,7 @@ public class ReminderRuleService implements ReminderRuleUseCase {
       Long userId,
       Long plantId,
       ReminderRule.Type type,
+      String customLabel,
       Integer intervalDays,
       LocalTime preferredTime
   ) {
@@ -38,6 +39,7 @@ public class ReminderRuleService implements ReminderRuleUseCase {
         null,
         plantId,
         type,
+        type == ReminderRule.Type.CUSTOM ? customLabel : null,
         intervalDays,
         preferredTime,
         null,
@@ -65,23 +67,33 @@ public class ReminderRuleService implements ReminderRuleUseCase {
 
   @Override
   public void deactivateReminder(Long userId, Long reminderId) {
+    setActiveState(userId, reminderId, false);
+  }
+
+  @Override
+  public void activateReminder(Long userId, Long reminderId) {
+    setActiveState(userId, reminderId, true);
+  }
+
+  private void setActiveState(Long userId, Long reminderId, boolean active) {
     ReminderRule rule = reminderRulePort.findById(reminderId)
         .orElseThrow(() -> new RuntimeException("Erinnerung nicht gefunden: " + reminderId));
 
     assertPlantOwnership(userId, rule.getPlantId());
 
-    ReminderRule deactivated = new ReminderRule(
+    ReminderRule updated = new ReminderRule(
         rule.getId(),
         rule.getPlantId(),
         rule.getType(),
+        rule.getCustomLabel(),
         rule.getIntervalDays(),
         rule.getPreferredTime(),
         rule.getLastTriggeredAt(),
         rule.getNextDueAt(),
-        false
+        active
     );
 
-    reminderRulePort.save(deactivated);
+    reminderRulePort.save(updated);
   }
 
   private void assertPlantOwnership(Long userId, Long plantId) {

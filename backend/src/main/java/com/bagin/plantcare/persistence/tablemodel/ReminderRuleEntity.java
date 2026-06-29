@@ -30,6 +30,8 @@ public class ReminderRuleEntity {
   @Enumerated(EnumType.STRING)
   private ReminderRuleType type;
 
+  private String customLabel;
+
   private Integer intervalDays;
 
   private LocalTime preferredTime;

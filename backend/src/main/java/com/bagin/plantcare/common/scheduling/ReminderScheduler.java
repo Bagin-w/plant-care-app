@@ -66,7 +66,7 @@ public class ReminderScheduler {
     String action = switch (reminder.getType()) {
       case WATERING -> "gegossen werden";
       case FERTILIZING -> "gedüngt werden";
-      case CUSTOM -> "gepflegt werden";
+      case CUSTOM -> reminder.getCustomLabel() != null ? reminder.getCustomLabel() : "gepflegt werden";
     };
     return plant.getNickname() + " sollte heute " + action + "!";
   }
@@ -78,6 +78,7 @@ public class ReminderScheduler {
         reminder.getId(),
         reminder.getPlantId(),
         reminder.getType(),
+        reminder.getCustomLabel(),
         reminder.getIntervalDays(),
         reminder.getPreferredTime(),
         LocalDate.now(),

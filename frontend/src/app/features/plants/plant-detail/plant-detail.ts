@@ -3,8 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { PlantService } from '../../../core/services/plant.service';
 import { CareProfileService } from '../../../core/services/care-profile.service';
+import { ReminderService } from '../../../core/services/reminder.service';
 import { Plant } from '../../../core/models/plant.model';
 import { CareProfile } from '../../../core/models/care-profile.model';
+import { ReminderRule, ReminderType } from '../../../core/models/reminder.model';
+import { getReminderTypeLabel } from '../../../core/utils/reminder-label.util';
+
 
 interface PlantFormState {
   nickname: string;
@@ -22,6 +26,13 @@ interface CareProfileFormState {
   notes: string;
 }
 
+interface NewReminderFormState {
+  type: ReminderType;
+  customLabel: string;
+  intervalDays: number;
+  preferredTime: string;
+}
+
 @Component({
   selector: 'app-plant-detail',
   imports: [FormsModule],
@@ -32,9 +43,11 @@ export class PlantDetail implements OnInit {
 
   plant = signal<Plant | null>(null);
   careProfile = signal<CareProfile | null>(null);
+  reminders = signal<ReminderRule[]>([]);
   errorMessage = signal('');
   successMessage = signal('');
   isEditMode = signal(false);
+  showReminderForm = signal(false);
 
   plantId!: number;
 
@@ -54,10 +67,18 @@ export class PlantDetail implements OnInit {
     notes: ''
   });
 
+  newReminderForm = signal<NewReminderFormState>({
+    type: 'WATERING',
+    customLabel: '',
+    intervalDays: 7,
+    preferredTime: ''
+  });
+
   constructor(
     private route: ActivatedRoute,
     private plantService: PlantService,
-    private careProfileService: CareProfileService
+    private careProfileService: CareProfileService,
+    private reminderService: ReminderService
   ) {}
 
   ngOnInit(): void {
@@ -93,8 +114,21 @@ export class PlantDetail implements OnInit {
           notes: profile.notes ?? ''
         });
       },
-      error: (err) => {
+      error: () => {
         this.errorMessage.set('Pflegeprofil konnte nicht geladen werden.');
+      }
+    });
+
+    this.loadReminders();
+  }
+
+  loadReminders(): void {
+    this.reminderService.getAllForPlant(this.plantId).subscribe({
+      next: (data) => {
+        this.reminders.set(data);
+      },
+      error: () => {
+        this.errorMessage.set('Erinnerungen konnten nicht geladen werden.');
       }
     });
   }
@@ -105,6 +139,10 @@ export class PlantDetail implements OnInit {
 
   updateCareProfileField<K extends keyof CareProfileFormState>(field: K, value: CareProfileFormState[K]): void {
     this.careProfileForm.update(current => ({ ...current, [field]: value }));
+  }
+
+  updateNewReminderField<K extends keyof NewReminderFormState>(field: K, value: NewReminderFormState[K]): void {
+    this.newReminderForm.update(current => ({ ...current, [field]: value }));
   }
 
   enterEditMode(): void {
@@ -156,5 +194,57 @@ export class PlantDetail implements OnInit {
         this.errorMessage.set('Pflanzendaten konnten nicht gespeichert werden.');
       }
     });
+  }
+
+  toggleReminderForm(): void {
+    this.showReminderForm.update(current => !current);
+  }
+
+  onCreateReminder(): void {
+    const data = this.newReminderForm();
+
+    this.reminderService.create(this.plantId, {
+      type: data.type,
+      customLabel: data.type === 'CUSTOM' ? data.customLabel || null : null,
+      intervalDays: data.intervalDays,
+      preferredTime: data.preferredTime || null
+    }).subscribe({
+      next: () => {
+        this.loadReminders();
+        this.showReminderForm.set(false);
+        this.newReminderForm.set({ type: 'WATERING', customLabel: '', intervalDays: 7, preferredTime: '' });
+      },
+      error: () => {
+        this.errorMessage.set('Erinnerung konnte nicht angelegt werden.');
+      }
+    });
+  }
+
+  onDeactivateReminder(reminderId: number): void {
+    this.reminderService.deactivate(reminderId).subscribe({
+      next: () => this.loadReminders(),
+      error: () => this.errorMessage.set('Erinnerung konnte nicht deaktiviert werden.')
+    });
+  }
+
+  onActivateReminder(reminderId: number): void {
+    this.reminderService.activate(reminderId).subscribe({
+      next: () => this.loadReminders(),
+      error: () => this.errorMessage.set('Erinnerung konnte nicht reaktiviert werden.')
+    });
+  }
+
+  onDeleteReminder(reminderId: number): void {
+    if (!confirm('Diese Erinnerung wirklich löschen?')) {
+      return;
+    }
+    this.reminderService.delete(reminderId).subscribe({
+      next: () => this.loadReminders(),
+      error: () => this.errorMessage.set('Erinnerung konnte nicht gelöscht werden.')
+    });
+  }
+
+  getTypeLabel(type: ReminderType, customLabel: string | null): string {
+    return getReminderTypeLabel(type, customLabel);
   }
 }

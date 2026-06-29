@@ -6,6 +6,7 @@ import java.time.LocalTime;
 
 public record CreateReminderRequest(
     ReminderRule.Type type,
+    String customLabel,
     Integer intervalDays,
     LocalTime preferredTime
 ) {

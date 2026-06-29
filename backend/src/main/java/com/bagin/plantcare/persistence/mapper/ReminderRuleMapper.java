@@ -13,6 +13,7 @@ public class ReminderRuleMapper {
         entity.getId(),
         entity.getPlantId(),
         ReminderRule.Type.valueOf(entity.getType().name()),
+        entity.getCustomLabel(),
         entity.getIntervalDays(),
         entity.getPreferredTime(),
         entity.getLastTriggeredAt(),
@@ -26,6 +27,7 @@ public class ReminderRuleMapper {
     entity.setId(reminderRule.getId());
     entity.setPlantId(reminderRule.getPlantId());
     entity.setType(ReminderRuleType.valueOf(reminderRule.getType().name()));
+    entity.setCustomLabel(reminderRule.getCustomLabel());
     entity.setIntervalDays(reminderRule.getIntervalDays());
     entity.setPreferredTime(reminderRule.getPreferredTime());
     entity.setLastTriggeredAt(reminderRule.getLastTriggeredAt());

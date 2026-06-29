@@ -11,6 +11,7 @@ public interface ReminderRuleUseCase {
       Long userId,
       Long plantId,
       ReminderRule.Type type,
+      String customLabel,
       Integer intervalDays,
       LocalTime preferredTime
   );
@@ -20,4 +21,6 @@ public interface ReminderRuleUseCase {
   void deleteReminder(Long userId, Long reminderId);
 
   void deactivateReminder(Long userId, Long reminderId);
+
+  void activateReminder(Long userId, Long reminderId);
 }
