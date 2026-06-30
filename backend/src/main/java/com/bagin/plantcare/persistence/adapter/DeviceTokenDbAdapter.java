@@ -4,6 +4,7 @@ import com.bagin.plantcare.domain.model.DeviceToken;
 import com.bagin.plantcare.persistence.mapper.DeviceTokenMapper;
 import com.bagin.plantcare.persistence.repository.DeviceTokenJpaRepository;
 import com.bagin.plantcare.ports.out.DeviceTokenPort;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,5 +35,10 @@ public class DeviceTokenDbAdapter implements DeviceTokenPort {
   @Override
   public void deleteByEndpoint(String endpoint) {
     jpaRepository.deleteByEndpoint(endpoint);
+  }
+
+  @Override
+  public Optional<DeviceToken> findByEndpoint(String endpoint) {
+    return jpaRepository.findByEndpoint(endpoint).map(mapper::toDomain);
   }
 }

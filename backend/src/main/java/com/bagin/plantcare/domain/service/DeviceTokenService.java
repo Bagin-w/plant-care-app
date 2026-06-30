@@ -16,7 +16,11 @@ public class DeviceTokenService implements DeviceTokenUseCase {
 
   @Override
   public DeviceToken registerDevice(Long userId, String endpoint, String p256dh, String auth) {
-    DeviceToken token = new DeviceToken(null, userId, endpoint, p256dh, auth);
-    return deviceTokenPort.save(token);
+    return deviceTokenPort.findByEndpoint(endpoint)
+        .map(existing -> existing)
+        .orElseGet(() -> {
+          DeviceToken newToken = new DeviceToken(null, userId, endpoint, p256dh, auth);
+          return deviceTokenPort.save(newToken);
+        });
   }
 }

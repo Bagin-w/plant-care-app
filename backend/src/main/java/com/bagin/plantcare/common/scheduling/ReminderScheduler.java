@@ -64,11 +64,12 @@ public class ReminderScheduler {
 
   private String buildMessage(ReminderRule reminder, Plant plant) {
     String action = switch (reminder.getType()) {
-      case WATERING -> "gegossen werden";
-      case FERTILIZING -> "gedüngt werden";
-      case CUSTOM -> reminder.getCustomLabel() != null ? reminder.getCustomLabel() : "gepflegt werden";
+      case WATERING -> "Gießen";
+      case FERTILIZING -> "Düngen";
+      case CUSTOM -> reminder.getCustomLabel() != null ? reminder.getCustomLabel() : "Pflege";
     };
-    return plant.getNickname() + " sollte heute " + action + "!";
+
+    return plant.getNickname() + " (" + plant.getLocation() + ") Erinnerung: " + action;
   }
 
   private void updateRuleAfterTrigger(ReminderRule reminder) {
