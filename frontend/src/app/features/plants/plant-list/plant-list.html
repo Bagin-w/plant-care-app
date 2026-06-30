@@ -1,21 +1,27 @@
-<div class="plant-list-container">
-  <h1>Meine Pflanzen</h1>
-  <a routerLink="/plants/new">+ Neue Pflanze</a>
+<div class="page-container">
+  <div class="page-header">
+    <h1>🌿 Meine Pflanzen</h1>
+    <a routerLink="/plants/new" class="btn-link">+ Neue Pflanze</a>
+  </div>
+
   @if (errorMessage()) {
     <p class="error">{{ errorMessage() }}</p>
   }
 
   @if (plants().length === 0 && !errorMessage()) {
-    <p>Du hast noch keine Pflanzen angelegt.</p>
+    <div class="empty-state">
+      <p>Du hast noch keine Pflanzen angelegt.</p>
+      <a routerLink="/plants/new" class="btn-link">Erste Pflanze anlegen</a>
+    </div>
   }
 
   <div class="plant-grid">
     @for (plant of plants(); track plant.id) {
       <div class="plant-card">
         <h3><a [routerLink]="['/plants', plant.id]">{{ plant.nickname }}</a></h3>
-        <p>{{ plant.speciesName }}</p>
-        <p>{{ plant.location }}</p>
-        <button (click)="onDelete(plant.id)">Löschen</button>
+        <p class="plant-species">{{ plant.speciesName }}</p>
+        <p class="plant-location">📍 {{ plant.location }}</p>
+        <button (click)="onDelete(plant.id)" class="btn-danger">Löschen</button>
       </div>
     }
   </div>

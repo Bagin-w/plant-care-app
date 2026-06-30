@@ -1,4 +1,4 @@
-<div class="plant-detail-container">
+<div class="plant-detail-page">
 
   @if (errorMessage()) {
     <p class="error">{{ errorMessage() }}</p>
@@ -7,274 +7,179 @@
     <p class="success">{{ successMessage() }}</p>
   }
 
-  @if (!isEditMode()) {
+  <div class="detail-grid">
 
-    <!-- ANSICHTS-MODUS -->
-    @if (plant()) {
-      <h1>{{ plant()!.nickname }}</h1>
-      <p><strong>Art:</strong> {{ plant()!.speciesName }}</p>
-      <p><strong>Standort:</strong> {{ plant()!.location }}</p>
-    }
+    <div class="detail-main">
 
-    <h2>Pflegeprofil</h2>
+      @if (!isEditMode()) {
 
-    @if (careProfile()) {
-      @if (careProfile()!.lightRequirement) {
-        <p><strong>Lichtbedarf:</strong> {{ careProfile()!.lightRequirement }}</p>
-      }
-
-      @if (careProfile()!.temperatureMin !== null || careProfile()!.temperatureMax !== null) {
-        <p>
-          <strong>Temperatur:</strong>
-          @if (careProfile()!.temperatureMin !== null) {
-            {{ careProfile()!.temperatureMin }}°C
-          }
-          @if (careProfile()!.temperatureMin !== null && careProfile()!.temperatureMax !== null) {
-            –
-          }
-          @if (careProfile()!.temperatureMax !== null) {
-            {{ careProfile()!.temperatureMax }}°C
-          }
-        </p>
-      }
-
-      @if (careProfile()!.humidityRequirement) {
-        <p><strong>Luftfeuchtigkeit:</strong> {{ careProfile()!.humidityRequirement }}</p>
-      }
-
-      @if (careProfile()!.wateringIntervalDays !== null) {
-        <p><strong>Gießintervall:</strong> {{ getIntervalLabel(careProfile()!.wateringIntervalDays!) }}</p>
-      }
-
-      @if (careProfile()!.fertilizingIntervalDays !== null) {
-        <p><strong>Düngeintervall:</strong> {{ getIntervalLabel(careProfile()!.fertilizingIntervalDays!) }}</p>
-      }
-
-      @if (careProfile()!.notes) {
-        <p><strong>Notizen:</strong> {{ careProfile()!.notes }}</p>
-      }
-
-      @if (!careProfile()!.lightRequirement && careProfile()!.temperatureMin === null && careProfile()!.temperatureMax === null && !careProfile()!.humidityRequirement && careProfile()!.wateringIntervalDays === null && careProfile()!.fertilizingIntervalDays === null && !careProfile()!.notes) {
-        <p class="empty-hint">Noch keine Pflegehinweise hinterlegt. Klicke auf "Bearbeiten", um sie einzutragen.</p>
-      }
-    }
-
-    <button (click)="enterEditMode()">Bearbeiten</button>
-
-  } @else {
-
-    <!-- BEARBEITUNGS-MODUS -->
-    <form (ngSubmit)="onSave()">
-
-      <h2>Pflanze</h2>
-
-      <div class="form-group">
-        <label for="nickname">Name</label>
-        <input
-          type="text"
-          id="nickname"
-          [ngModel]="plantForm().nickname"
-          (ngModelChange)="updatePlantField('nickname', $event)"
-          name="nickname"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="speciesName">Pflanzenart</label>
-        <input
-          type="text"
-          id="speciesName"
-          [ngModel]="plantForm().speciesName"
-          (ngModelChange)="updatePlantField('speciesName', $event)"
-          name="speciesName"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="location">Standort</label>
-        <input
-          type="text"
-          id="location"
-          [ngModel]="plantForm().location"
-          (ngModelChange)="updatePlantField('location', $event)"
-          name="location"
-        />
-      </div>
-
-      <h2>Pflegeprofil</h2>
-
-      <div class="form-group">
-        <label for="lightRequirement">Lichtbedarf</label>
-        <input
-          type="text"
-          id="lightRequirement"
-          [ngModel]="careProfileForm().lightRequirement"
-          (ngModelChange)="updateCareProfileField('lightRequirement', $event)"
-          name="lightRequirement"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="temperatureMin">Min. Temperatur (°C)</label>
-        <input
-          type="number"
-          id="temperatureMin"
-          [ngModel]="careProfileForm().temperatureMin"
-          (ngModelChange)="updateCareProfileField('temperatureMin', $event)"
-          name="temperatureMin"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="temperatureMax">Max. Temperatur (°C)</label>
-        <input
-          type="number"
-          id="temperatureMax"
-          [ngModel]="careProfileForm().temperatureMax"
-          (ngModelChange)="updateCareProfileField('temperatureMax', $event)"
-          name="temperatureMax"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="humidityRequirement">Luftfeuchtigkeit</label>
-        <input
-          type="text"
-          id="humidityRequirement"
-          [ngModel]="careProfileForm().humidityRequirement"
-          (ngModelChange)="updateCareProfileField('humidityRequirement', $event)"
-          name="humidityRequirement"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="wateringIntervalDays">Gießintervall (Tage)</label>
-        <input
-          type="number"
-          id="wateringIntervalDays"
-          [ngModel]="careProfileForm().wateringIntervalDays"
-          (ngModelChange)="updateCareProfileField('wateringIntervalDays', $event)"
-          name="wateringIntervalDays"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="fertilizingIntervalDays">Düngeintervall (Tage)</label>
-        <input
-          type="number"
-          id="fertilizingIntervalDays"
-          [ngModel]="careProfileForm().fertilizingIntervalDays"
-          (ngModelChange)="updateCareProfileField('fertilizingIntervalDays', $event)"
-          name="fertilizingIntervalDays"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="notes">Notizen</label>
-        <textarea
-          id="notes"
-          [ngModel]="careProfileForm().notes"
-          (ngModelChange)="updateCareProfileField('notes', $event)"
-          name="notes"
-        ></textarea>
-      </div>
-
-      <button type="submit">Speichern</button>
-      <button type="button" (click)="cancelEdit()">Abbrechen</button>
-
-    </form>
-
-  }
-
-  <!-- REMINDER-BEREICH -->
-  <h2>Erinnerungen</h2>
-
-  @if (reminders().length === 0) {
-    <p>Noch keine Erinnerungen angelegt.</p>
-  }
-
-  <ul class="reminder-list">
-    @for (reminder of reminders(); track reminder.id) {
-      <li class="reminder-item" [class.inactive]="!reminder.active">
-        <strong>{{ getTypeLabel(reminder.type, reminder.customLabel) }}</strong> – {{ getIntervalLabel(reminder.intervalDays) }}
-        @if (reminder.preferredTime) {
-          um {{ reminder.preferredTime | slice:0:5 }} Uhr
+        <!-- ANSICHTS-MODUS -->
+        @if (plant()) {
+          <h1>{{ plant()!.nickname }}</h1>
+          <p><strong>Art:</strong> {{ plant()!.speciesName }}</p>
+          <p><strong>Standort:</strong> {{ plant()!.location }}</p>
         }
-        <br />
-        Nächste Fälligkeit: {{ reminder.nextDueAt | date:'dd.MM.yyyy' }}
-        @if (!reminder.active) {
-          <em>(inaktiv)</em>
-        }
-        <div class="reminder-actions">
-          @if (reminder.active) {
-            <button (click)="onDeactivateReminder(reminder.id)">Pausieren</button>
-          } @else {
-            <button (click)="onActivateReminder(reminder.id)">Reaktivieren</button>
+
+        <h2>Pflegeprofil</h2>
+
+        @if (careProfile()) {
+          @if (careProfile()!.lightRequirement) {
+            <p><strong>Lichtbedarf:</strong> {{ careProfile()!.lightRequirement }}</p>
           }
-          <button (click)="onDeleteReminder(reminder.id)">Löschen</button>
-        </div>
-      </li>
-    }
-  </ul>
+          @if (careProfile()!.temperatureMin !== null || careProfile()!.temperatureMax !== null) {
+            <p>
+              <strong>Temperatur:</strong>
+              @if (careProfile()!.temperatureMin !== null) { {{ careProfile()!.temperatureMin }}°C }
+              @if (careProfile()!.temperatureMin !== null && careProfile()!.temperatureMax !== null) { – }
+              @if (careProfile()!.temperatureMax !== null) { {{ careProfile()!.temperatureMax }}°C }
+            </p>
+          }
+          @if (careProfile()!.humidityRequirement) {
+            <p><strong>Luftfeuchtigkeit:</strong> {{ careProfile()!.humidityRequirement }}</p>
+          }
+          @if (careProfile()!.wateringIntervalDays !== null) {
+            <p><strong>Gießintervall:</strong> {{ getIntervalLabel(careProfile()!.wateringIntervalDays!) }}</p>
+          }
+          @if (careProfile()!.fertilizingIntervalDays !== null) {
+            <p><strong>Düngeintervall:</strong> {{ getIntervalLabel(careProfile()!.fertilizingIntervalDays!) }}</p>
+          }
+          @if (careProfile()!.notes) {
+            <p><strong>Notizen:</strong> {{ careProfile()!.notes }}</p>
+          }
+          @if (!careProfile()!.lightRequirement && careProfile()!.temperatureMin === null && careProfile()!.temperatureMax === null && !careProfile()!.humidityRequirement && careProfile()!.wateringIntervalDays === null && careProfile()!.fertilizingIntervalDays === null && !careProfile()!.notes) {
+            <p class="empty-hint">Noch keine Pflegehinweise hinterlegt. Klicke auf "Bearbeiten", um sie einzutragen.</p>
+          }
+        }
 
-  @if (!showReminderForm()) {
-    <button (click)="toggleReminderForm()">+ Neue Erinnerung</button>
-  } @else {
-    <div class="new-reminder-form">
-      <div class="form-group">
-        <label for="reminderType">Typ</label>
-        <select
-          id="reminderType"
-          [ngModel]="newReminderForm().type"
-          (ngModelChange)="updateNewReminderField('type', $event)"
-          name="reminderType"
-        >
-          <option value="WATERING">Gießen</option>
-          <option value="FERTILIZING">Düngen</option>
-          <option value="CUSTOM">Sonstiges</option>
-        </select>
-      </div>
+        <button (click)="enterEditMode()">Bearbeiten</button>
 
-      @if (newReminderForm().type === 'CUSTOM') {
-        <div class="form-group">
-          <label for="customLabel">Was genau?</label>
-          <input
-            type="text"
-            id="customLabel"
-            [ngModel]="newReminderForm().customLabel"
-            (ngModelChange)="updateNewReminderField('customLabel', $event)"
-            name="customLabel"
-            placeholder="z.B. Umtopfen"
-          />
-        </div>
+      } @else {
+
+        <!-- BEARBEITUNGS-MODUS -->
+        <form (ngSubmit)="onSave()">
+          <h2>Pflanze</h2>
+          <div class="form-group">
+            <label for="nickname">Name</label>
+            <input type="text" id="nickname" [ngModel]="plantForm().nickname" (ngModelChange)="updatePlantField('nickname', $event)" name="nickname" />
+          </div>
+          <div class="form-group">
+            <label for="speciesName">Pflanzenart</label>
+            <input type="text" id="speciesName" [ngModel]="plantForm().speciesName" (ngModelChange)="updatePlantField('speciesName', $event)" name="speciesName" />
+          </div>
+          <div class="form-group">
+            <label for="location">Standort</label>
+            <input type="text" id="location" [ngModel]="plantForm().location" (ngModelChange)="updatePlantField('location', $event)" name="location" />
+          </div>
+
+          <h2>Pflegeprofil</h2>
+          <div class="form-group">
+            <label for="lightRequirement">Lichtbedarf</label>
+            <input type="text" id="lightRequirement" [ngModel]="careProfileForm().lightRequirement" (ngModelChange)="updateCareProfileField('lightRequirement', $event)" name="lightRequirement" />
+          </div>
+          <div class="form-group">
+            <label for="temperatureMin">Min. Temperatur (°C)</label>
+            <input type="number" id="temperatureMin" [ngModel]="careProfileForm().temperatureMin" (ngModelChange)="updateCareProfileField('temperatureMin', $event)" name="temperatureMin" />
+          </div>
+          <div class="form-group">
+            <label for="temperatureMax">Max. Temperatur (°C)</label>
+            <input type="number" id="temperatureMax" [ngModel]="careProfileForm().temperatureMax" (ngModelChange)="updateCareProfileField('temperatureMax', $event)" name="temperatureMax" />
+          </div>
+          <div class="form-group">
+            <label for="humidityRequirement">Luftfeuchtigkeit</label>
+            <input type="text" id="humidityRequirement" [ngModel]="careProfileForm().humidityRequirement" (ngModelChange)="updateCareProfileField('humidityRequirement', $event)" name="humidityRequirement" />
+          </div>
+          <div class="form-group">
+            <label for="wateringIntervalDays">Gießintervall (Tage)</label>
+            <input type="number" id="wateringIntervalDays" [ngModel]="careProfileForm().wateringIntervalDays" (ngModelChange)="updateCareProfileField('wateringIntervalDays', $event)" name="wateringIntervalDays" />
+          </div>
+          <div class="form-group">
+            <label for="fertilizingIntervalDays">Düngeintervall (Tage)</label>
+            <input type="number" id="fertilizingIntervalDays" [ngModel]="careProfileForm().fertilizingIntervalDays" (ngModelChange)="updateCareProfileField('fertilizingIntervalDays', $event)" name="fertilizingIntervalDays" />
+          </div>
+          <div class="form-group">
+            <label for="notes">Notizen</label>
+            <textarea id="notes" [ngModel]="careProfileForm().notes" (ngModelChange)="updateCareProfileField('notes', $event)" name="notes"></textarea>
+          </div>
+
+          <button type="submit">Speichern</button>
+          <button type="button" (click)="cancelEdit()">Abbrechen</button>
+        </form>
       }
 
-      <div class="form-group">
-        <label for="reminderInterval">Intervall (Tage)</label>
-        <input
-          type="number"
-          id="reminderInterval"
-          min="1"
-          [ngModel]="newReminderForm().intervalDays"
-          (ngModelChange)="updateNewReminderField('intervalDays', $event)"
-          name="reminderInterval"
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="reminderTime">Bevorzugte Uhrzeit (optional)</label>
-        <input
-          type="time"
-          id="reminderTime"
-          [ngModel]="newReminderForm().preferredTime"
-          (ngModelChange)="updateNewReminderField('preferredTime', $event)"
-          name="reminderTime"
-        />
-      </div>
-
-      <button (click)="onCreateReminder()">Erinnerung anlegen</button>
-      <button (click)="toggleReminderForm()">Abbrechen</button>
     </div>
-  }
+
+    <div class="detail-sidebar">
+      <div class="sidebar-header">
+        <h2>Erinnerungen</h2>
+        @if (!showReminderForm()) {
+          <button (click)="toggleReminderForm()" class="btn-small">+ Neu</button>
+        }
+      </div>
+
+      <div class="reminder-scroll-box">
+        @if (reminders().length === 0) {
+          <p>Noch keine Erinnerungen angelegt.</p>
+        }
+
+        <ul class="reminder-list">
+          @for (reminder of reminders(); track reminder.id) {
+            <li class="reminder-item" [class.inactive]="!reminder.active">
+              <strong>{{ getTypeLabel(reminder.type, reminder.customLabel) }}</strong> – {{ getIntervalLabel(reminder.intervalDays) }}
+              @if (reminder.preferredTime) {
+                um {{ reminder.preferredTime | slice:0:5 }} Uhr
+              }
+              <br />
+              Nächste Fälligkeit: {{ reminder.nextDueAt | date:'dd.MM.yyyy' }}
+              @if (!reminder.active) {
+                <em>(inaktiv)</em>
+              }
+              <div class="reminder-actions">
+                @if (reminder.active) {
+                  <button (click)="onDeactivateReminder(reminder.id)">Pausieren</button>
+                } @else {
+                  <button (click)="onActivateReminder(reminder.id)">Reaktivieren</button>
+                }
+                <button (click)="onDeleteReminder(reminder.id)">Löschen</button>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+
+      @if (showReminderForm()) {
+        <div class="new-reminder-form">
+          <div class="form-group">
+            <label for="reminderType">Typ</label>
+            <select id="reminderType" [ngModel]="newReminderForm().type" (ngModelChange)="updateNewReminderField('type', $event)" name="reminderType">
+              <option value="WATERING">Gießen</option>
+              <option value="FERTILIZING">Düngen</option>
+              <option value="CUSTOM">Sonstiges</option>
+            </select>
+          </div>
+
+          @if (newReminderForm().type === 'CUSTOM') {
+            <div class="form-group">
+              <label for="customLabel">Was genau?</label>
+              <input type="text" id="customLabel" [ngModel]="newReminderForm().customLabel" (ngModelChange)="updateNewReminderField('customLabel', $event)" name="customLabel" placeholder="z.B. Umtopfen" />
+            </div>
+          }
+
+          <div class="form-group">
+            <label for="reminderInterval">Intervall (Tage)</label>
+            <input type="number" id="reminderInterval" min="1" [ngModel]="newReminderForm().intervalDays" (ngModelChange)="updateNewReminderField('intervalDays', $event)" name="reminderInterval" />
+          </div>
+
+          <div class="form-group">
+            <label for="reminderTime">Bevorzugte Uhrzeit (optional)</label>
+            <input type="time" id="reminderTime" [ngModel]="newReminderForm().preferredTime" (ngModelChange)="updateNewReminderField('preferredTime', $event)" name="reminderTime" />
+          </div>
+
+          <button (click)="onCreateReminder()">Erinnerung anlegen</button>
+          <button (click)="toggleReminderForm()">Abbrechen</button>
+        </div>
+      }
+    </div>
+
+  </div>
 
 </div>

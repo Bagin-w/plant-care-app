@@ -1,33 +1,36 @@
-<div class="login-container">
-  <h1>Login</h1>
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>🌿 Plant Care</h1>
+    <p class="auth-subtitle">Melde dich an, um deine Pflanzen zu verwalten</p>
 
-  <form (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="email">E-Mail</label>
-      <input
-        type="email"
-        id="email"
-        [(ngModel)]="email"
-        name="email"
-        required
-      />
-    </div>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">E-Mail</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+        />
+      </div>
 
-    <div class="form-group">
-      <label for="password">Passwort</label>
-      <input
-        type="password"
-        id="password"
-        [(ngModel)]="password"
-        name="password"
-        required
-      />
-    </div>
+      <div class="form-group">
+        <label for="password">Passwort</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+        />
+      </div>
 
-    @if (errorMessage()) {
-      <p class="error">{{ errorMessage() }}</p>
-    }
+      @if (errorMessage()) {
+        <p class="error">{{ errorMessage() }}</p>
+      }
 
-    <button type="submit">Einloggen</button>
-  </form>
+      <button type="submit" class="btn-full">Einloggen</button>
+    </form>
+  </div>
 </div>

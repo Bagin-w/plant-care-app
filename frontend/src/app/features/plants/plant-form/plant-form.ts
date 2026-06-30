@@ -2,10 +2,11 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PlantService } from '../../../core/services/plant.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-plant-form',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './plant-form.html',
   styleUrl: './plant-form.css'
 })

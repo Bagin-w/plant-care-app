@@ -1,0 +1,43 @@
+.form-page {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.form-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xl);
+  width: 100%;
+  max-width: 28rem;
+  box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.06);
+}
+
+.form-card h1 {
+  font-size: 1.375rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  color: var(--color-text-muted);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.btn-cancel-link {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
