@@ -4,9 +4,9 @@ import com.bagin.plantcare.domain.model.ReminderRule;
 import com.bagin.plantcare.persistence.mapper.ReminderRuleMapper;
 import com.bagin.plantcare.persistence.repository.ReminderRuleJpaRepository;
 import com.bagin.plantcare.ports.out.ReminderRulePort;
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class ReminderRuleDbAdapter implements ReminderRulePort {
   }
 
   @Override
-  public List<ReminderRule> findAllDueByDate(LocalDate date) {
+  public List<ReminderRule> findAllDueByDateTime(LocalDateTime date) {
     return jpaRepository.findAllByActiveTrueAndNextDueAtLessThanEqual(date).stream()
         .map(mapper::toDomain)
         .toList();

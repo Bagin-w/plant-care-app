@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -36,9 +36,9 @@ public class ReminderRuleEntity {
 
   private LocalTime preferredTime;
 
-  private LocalDate lastTriggeredAt;
+  private LocalDateTime lastTriggeredAt;
 
-  private LocalDate nextDueAt;
+  private LocalDateTime nextDueAt;
 
   private boolean active;
 }

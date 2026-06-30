@@ -8,6 +8,7 @@ import com.bagin.plantcare.ports.out.ReminderRulePort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class ReminderRuleService implements ReminderRuleUseCase {
       throw new RuntimeException("Intervall muss mindestens 1 Tag betragen");
     }
 
-    LocalDate nextDueAt = calculateInitialDueDate(intervalDays, preferredTime);
+    LocalDateTime nextDueAt = calculateInitialDueDate(intervalDays, preferredTime);
 
     ReminderRule newRule = new ReminderRule(
         null,
@@ -54,19 +55,20 @@ public class ReminderRuleService implements ReminderRuleUseCase {
     return reminderRulePort.save(newRule);
   }
 
-  private LocalDate calculateInitialDueDate(Integer intervalDays, LocalTime preferredTime) {
+  private LocalDateTime calculateInitialDueDate(Integer intervalDays, LocalTime preferredTime) {
     LocalDate today = LocalDate.now();
 
     if (preferredTime == null) {
-      return today.plusDays(intervalDays);
+      return LocalDateTime.now().plusDays(intervalDays);
     }
 
-    LocalTime now = LocalTime.now();
-    if (preferredTime.isAfter(now)) {
-      return today;
+    LocalDateTime todayAtPreferredTime = LocalDateTime.of(today, preferredTime);
+
+    if (todayAtPreferredTime.isAfter(LocalDateTime.now())) {
+      return todayAtPreferredTime;
     }
 
-    return today.plusDays(intervalDays);
+    return todayAtPreferredTime.plusDays(intervalDays);
   }
 
   @Override

@@ -10,7 +10,7 @@ import com.bagin.plantcare.ports.out.ReminderRulePort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,10 +34,10 @@ public class ReminderScheduler {
     this.pushNotificationSender = pushNotificationSender;
   }
 
-  @Scheduled(cron = "0 0 * * * *")
+  @Scheduled(cron = "*/10 * * * * *")
   public void checkDueReminders() {
-    LocalDate today = LocalDate.now();
-    List<ReminderRule> dueReminders = reminderRulePort.findAllDueByDate(today);
+    LocalDateTime now = LocalDateTime.now();
+    List<ReminderRule> dueReminders = reminderRulePort.findAllDueByDateTime(now);
 
     for (ReminderRule reminder : dueReminders) {
       processReminder(reminder);
@@ -72,7 +72,7 @@ public class ReminderScheduler {
   }
 
   private void updateRuleAfterTrigger(ReminderRule reminder) {
-    LocalDate newNextDueAt = LocalDate.now().plusDays(reminder.getIntervalDays());
+    LocalDateTime newNextDueAt = LocalDateTime.now().plusDays(reminder.getIntervalDays());
 
     ReminderRule updated = new ReminderRule(
         reminder.getId(),
@@ -81,7 +81,7 @@ public class ReminderScheduler {
         reminder.getCustomLabel(),
         reminder.getIntervalDays(),
         reminder.getPreferredTime(),
-        LocalDate.now(),
+        LocalDateTime.now(),
         newNextDueAt,
         reminder.isActive()
     );

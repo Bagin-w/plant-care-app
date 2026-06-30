@@ -2,7 +2,7 @@ package com.bagin.plantcare.ports.out;
 
 import com.bagin.plantcare.domain.model.ReminderRule;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +14,7 @@ public interface ReminderRulePort {
 
   List<ReminderRule> findAllByPlantId(Long plantId);
 
-  List<ReminderRule> findAllDueByDate(LocalDate date);
+  List<ReminderRule> findAllDueByDateTime(LocalDateTime date);
 
   void deleteById(Long id);
 }

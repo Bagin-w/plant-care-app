@@ -3,6 +3,7 @@ package com.bagin.plantcare.rest.dto;
 import com.bagin.plantcare.domain.model.ReminderRule;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record ReminderRuleResponse(
@@ -12,8 +13,8 @@ public record ReminderRuleResponse(
     String customLabel,
     Integer intervalDays,
     LocalTime preferredTime,
-    LocalDate lastTriggeredAt,
-    LocalDate nextDueAt,
+    LocalDateTime lastTriggeredAt,
+    LocalDateTime nextDueAt,
     boolean active
 ) {
   public static ReminderRuleResponse fromDomain(ReminderRule rule) {
