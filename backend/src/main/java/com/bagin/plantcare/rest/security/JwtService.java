@@ -1,10 +1,10 @@
 package com.bagin.plantcare.rest.security;
 
-import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -12,11 +12,12 @@ import java.util.Date;
 @Component
 public class JwtService {
 
-  // TODO: Nur für local Entwicklung. Später in application.properties auslagern!
-  private static final String SECRET = "ein-mindestens-32-zeichen-langer-geheimer-schluessel-hier";
-  private static final long EXPIRATION_MS = 1000 * 60 * 60 * 24; // 24 Stunden
+  private final SecretKey key;
+  private static final long EXPIRATION_MS = 1000 * 60 * 60 * 24;
 
-  private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
+  public JwtService(@Value("${jwt.secret}") String secret) {
+    this.key = Keys.hmacShaKeyFor(secret.getBytes());
+  }
 
   public String generateToken(Long userId, String email) {
     Date now = new Date();

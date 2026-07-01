@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CareProfile, UpdateCareProfileRequest } from '../models/care-profile.model';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CareProfileService {
 
-  private apiUrl = 'http://localhost:8080/api/plants';
+  private apiUrl = `${environment.apiUrl}/plants`;
 
   constructor(private http: HttpClient) {}
 

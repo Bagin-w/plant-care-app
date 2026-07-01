@@ -38,6 +38,10 @@ public class ReminderRuleService implements ReminderRuleUseCase {
       throw new RuntimeException("Intervall muss mindestens 1 Tag betragen");
     }
 
+    if (preferredTime == null) {
+      throw new RuntimeException("Eine Uhrzeit für die Erinnerung ist erforderlich");
+    }
+
     LocalDateTime nextDueAt = calculateInitialDueDate(intervalDays, preferredTime);
 
     ReminderRule newRule = new ReminderRule(

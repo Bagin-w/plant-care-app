@@ -1,9 +1,20 @@
 <div class="auth-page">
   <div class="auth-card">
     <h1>🌿 Plant Care</h1>
-    <p class="auth-subtitle">Melde dich an, um deine Pflanzen zu verwalten</p>
+    <p class="auth-subtitle">Erstelle ein neues Konto</p>
 
     <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="name"
+          name="name"
+          required
+        />
+      </div>
+
       <div class="form-group">
         <label for="email">E-Mail</label>
         <input
@@ -30,11 +41,11 @@
         <p class="error">{{ errorMessage() }}</p>
       }
 
-      <button type="submit" class="btn-full">Einloggen</button>
+      <button type="submit" class="btn-full">Registrieren</button>
     </form>
+
     <p class="auth-link">
-      Noch kein Konto? <a routerLink="/register">Registrieren</a>
+      Bereits ein Konto? <a routerLink="/login">Einloggen</a>
     </p>
   </div>
 </div>
-

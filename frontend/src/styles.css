@@ -3,7 +3,7 @@
   --color-primary-dark: #3a6147;
   --color-primary-light: #e8f3ec;
   --color-background: #fafaf8;
-  --color-surface: #ffffff;
+  --color-surface: rgba(255, 255, 255, 0.85);
   --color-text: #2d2d2a;
   --color-text-muted: #6b6b66;
   --color-border: #e0e0db;
@@ -20,6 +20,8 @@
   --spacing-xl: 2rem;
 
   --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --zoom :1.5;
 }
 
 html {
@@ -36,8 +38,13 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
   line-height: 1.5;
-  zoom: 1.5;
-}
+  zoom: var(--zoom);
+
+  background-image: url('../public/background2.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  }
 
 h1, h2, h3 {
   color: var(--color-text);
@@ -83,4 +90,14 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.message-fade {
+  animation: fadeOut 3s ease forwards;
 }

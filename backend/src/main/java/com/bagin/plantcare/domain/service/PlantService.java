@@ -24,12 +24,15 @@ public class PlantService implements PlantUseCase {
 
   @Override
   public Plant createPlant(Long userId, String nickname, String speciesName, String photoUrl, String location) {
+    if (nickname == null || nickname.isBlank()) {
+      throw new RuntimeException("Ein Name für die Pflanze ist erforderlich");
+    }
+
     Plant newPlant = new Plant(null, userId, nickname, speciesName, photoUrl, location);
     Plant savedPlant = plantPort.save(newPlant);
 
     CareProfile emptyProfile = new CareProfile(
-        null,
-        savedPlant.getId(),
+        null, savedPlant.getId(),
         null, null, null, null, null, null, null
     );
     careProfilePort.save(emptyProfile);
@@ -67,6 +70,10 @@ public class PlantService implements PlantUseCase {
         .orElseThrow(() -> new RuntimeException("Pflanze nicht gefunden: " + plantId));
 
     assertOwnership(existing, userId);
+
+    if (nickname == null || nickname.isBlank()) {
+      throw new RuntimeException("Ein Name für die Pflanze ist erforderlich");
+    }
 
     Plant updated = new Plant(plantId, userId, nickname, speciesName, photoUrl, location);
     return plantPort.save(updated);

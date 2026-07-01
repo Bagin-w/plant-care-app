@@ -8,9 +8,8 @@ import { Plant } from '../../../core/models/plant.model';
 import { CareProfile } from '../../../core/models/care-profile.model';
 import { ReminderRule, ReminderType } from '../../../core/models/reminder.model';
 import { getReminderTypeLabel } from '../../../core/utils/reminder-label.util';
-import {DatePipe, SlicePipe} from '@angular/common';
 import { formatIntervalDays } from '../../../core/utils/interval-label.util';
-
+import { DatePipe, SlicePipe } from '@angular/common';
 
 interface PlantFormState {
   nickname: string;
@@ -117,7 +116,7 @@ export class PlantDetail implements OnInit {
         });
       },
       error: () => {
-        this.errorMessage.set('Pflegeprofil konnte nicht geladen werden.');
+        this.showTemporaryMessage('error', 'Pflegeprofil konnte nicht geladen werden.');
       }
     });
 
@@ -130,7 +129,7 @@ export class PlantDetail implements OnInit {
         this.reminders.set(data);
       },
       error: () => {
-        this.errorMessage.set('Erinnerungen konnten nicht geladen werden.');
+        this.showTemporaryMessage('error', 'Erinnerungen konnten nicht geladen werden.');
       }
     });
   }
@@ -150,6 +149,7 @@ export class PlantDetail implements OnInit {
   enterEditMode(): void {
     this.isEditMode.set(true);
     this.successMessage.set('');
+    this.errorMessage.set('');
   }
 
   cancelEdit(): void {
@@ -162,13 +162,19 @@ export class PlantDetail implements OnInit {
     this.errorMessage.set('');
 
     const plantData = this.plantForm();
+
+    if (!plantData.nickname.trim()) {
+      this.showTemporaryMessage('error', 'Der Name der Pflanze darf nicht leer sein.');
+      return;
+    }
+
     const careProfileData = this.careProfileForm();
 
     this.plantService.update(this.plantId, {
-      nickname: plantData.nickname,
-      speciesName: plantData.speciesName,
+      nickname: plantData.nickname.trim(),
+      speciesName: plantData.speciesName.trim(),
       photoUrl: this.plant()?.photoUrl ?? null,
-      location: plantData.location
+      location: plantData.location.trim()
     }).subscribe({
       next: (updatedPlant) => {
         this.plant.set(updatedPlant);
@@ -184,26 +190,32 @@ export class PlantDetail implements OnInit {
         }).subscribe({
           next: (updatedProfile) => {
             this.careProfile.set(updatedProfile);
-            this.successMessage.set('Gespeichert!');
+            this.showTemporaryMessage('success', 'Gespeichert!');
             this.isEditMode.set(false);
           },
           error: () => {
-            this.errorMessage.set('Pflegeprofil konnte nicht gespeichert werden.');
+            this.showTemporaryMessage('error', 'Pflegeprofil konnte nicht gespeichert werden.');
           }
         });
       },
       error: () => {
-        this.errorMessage.set('Pflanzendaten konnten nicht gespeichert werden.');
+        this.showTemporaryMessage('error', 'Pflanzendaten konnten nicht gespeichert werden.');
       }
     });
   }
 
   toggleReminderForm(): void {
     this.showReminderForm.update(current => !current);
+    this.errorMessage.set('');
   }
 
   onCreateReminder(): void {
     const data = this.newReminderForm();
+
+    if (!data.preferredTime) {
+      this.showTemporaryMessage('error', 'Bitte gib eine Uhrzeit für die Erinnerung an.');
+      return;
+    }
 
     this.reminderService.create(this.plantId, {
       type: data.type,
@@ -215,9 +227,10 @@ export class PlantDetail implements OnInit {
         this.loadReminders();
         this.showReminderForm.set(false);
         this.newReminderForm.set({ type: 'WATERING', customLabel: '', intervalDays: 7, preferredTime: '' });
+        this.errorMessage.set('');
       },
       error: () => {
-        this.errorMessage.set('Erinnerung konnte nicht angelegt werden.');
+        this.showTemporaryMessage('error', 'Erinnerung konnte nicht angelegt werden.');
       }
     });
   }
@@ -225,14 +238,14 @@ export class PlantDetail implements OnInit {
   onDeactivateReminder(reminderId: number): void {
     this.reminderService.deactivate(reminderId).subscribe({
       next: () => this.loadReminders(),
-      error: () => this.errorMessage.set('Erinnerung konnte nicht deaktiviert werden.')
+      error: () => this.showTemporaryMessage('error', 'Erinnerung konnte nicht deaktiviert werden.')
     });
   }
 
   onActivateReminder(reminderId: number): void {
     this.reminderService.activate(reminderId).subscribe({
       next: () => this.loadReminders(),
-      error: () => this.errorMessage.set('Erinnerung konnte nicht reaktiviert werden.')
+      error: () => this.showTemporaryMessage('error', 'Erinnerung konnte nicht reaktiviert werden.')
     });
   }
 
@@ -242,7 +255,7 @@ export class PlantDetail implements OnInit {
     }
     this.reminderService.delete(reminderId).subscribe({
       next: () => this.loadReminders(),
-      error: () => this.errorMessage.set('Erinnerung konnte nicht gelöscht werden.')
+      error: () => this.showTemporaryMessage('error', 'Erinnerung konnte nicht gelöscht werden.')
     });
   }
 
@@ -252,5 +265,15 @@ export class PlantDetail implements OnInit {
 
   getIntervalLabel(days: number): string {
     return formatIntervalDays(days);
+  }
+
+  private showTemporaryMessage(type: 'success' | 'error', message: string): void {
+    if (type === 'success') {
+      this.successMessage.set(message);
+      setTimeout(() => this.successMessage.set(''), 3000);
+    } else {
+      this.errorMessage.set(message);
+      setTimeout(() => this.errorMessage.set(''), 3000);
+    }
   }
 }

@@ -25,16 +25,21 @@ export class PlantForm {
   onSubmit(): void {
     this.errorMessage.set('');
 
+    if (!this.nickname.trim()) {
+      this.errorMessage.set('Bitte gib deiner Pflanze einen Namen.');
+      return;
+    }
+
     this.plantService.create({
-      nickname: this.nickname,
-      speciesName: this.speciesName,
+      nickname: this.nickname.trim(),
+      speciesName: this.speciesName.trim(),
       photoUrl: null,
-      location: this.location
+      location: this.location.trim()
     }).subscribe({
       next: () => {
         this.router.navigate(['/plants']);
       },
-      error: (err) => {
+      error: () => {
         this.errorMessage.set('Pflanze konnte nicht angelegt werden.');
       }
     });
