@@ -40,7 +40,7 @@ body {
   line-height: 1.5;
   zoom: var(--zoom);
 
-  background-image: url('../public/background2.jpg');
+  background-image: url('../public/background.jpg');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
