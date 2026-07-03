@@ -16,6 +16,9 @@ Eine Fullstack-Webanwendung zur Verwaltung von Zimmerpflanzen mit Pflegeprofilen
 |---|---|
 | ![Login](frontend/public/Login.jpg) | ![Registrierung](frontend/public/Registrierung.JPG) |
 
+| Push Nachricht                            |
+|-------------------------------------------|
+| ![Login](frontend/public/PushMessage.JPG) |
 ---
 
 ## Features
